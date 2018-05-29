@@ -8,6 +8,8 @@ import (
     "github.com/shakewon/block-explorer/service"
     "github.com/shakewon/block-explorer/repository/xormimpl"
     "github.com/shakewon/block-explorer/repository"
+    "github.com/shakewon/block-explorer/third/bubuji"
+    "github.com/shakewon/block-explorer/sys"
 )
 
 func main() {
@@ -35,11 +37,24 @@ func basicMVC(app *mvc.Application) {
         panic(error)
     }
     trxController := new(controller.TrxController)
-    trxController.TransactionService = service.TransactionService{Ts:&xormimpl.XormTransactionRepoImpl{Engine: engine}}
+    transactionService := service.TransactionService{Ts: &xormimpl.XormTransactionRepoImpl{Engine: engine}}
+    trxController.TransactionService = transactionService
     app.Party("/trx").
         Handle(trxController)
 
     blockController := new(controller.BlockController)
-    blockController.BlockService = service.BlockService{Bs: &xormimpl.XormBlockRepoImpl{Engine: engine}}
+    blockService := service.BlockService{Bs: &xormimpl.XormBlockRepoImpl{Engine: engine}}
+    blockController.BlockService = blockService
     app.Party("/block").Handle(blockController)
+    convert:= &bubuji.BubujiChainConvert{
+       URL:     "http://rpc-bbjchain.zhonganinfo.com",
+       ChainId: "prover",
+    }
+    convert.Init()
+    job := sys.SysJob{
+       BlockService:       blockService,
+       TransactionService: transactionService,
+       Convert:            convert,
+    }
+    go job.Start()
 }
