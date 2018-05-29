@@ -7,7 +7,7 @@ import (
 )
 
 type XormTransactionRepoImpl struct {
-    xorm.Engine
+    *xorm.Engine
     repository.TransactionsRepo
 }
 
@@ -26,13 +26,17 @@ func (x *XormTransactionRepoImpl) Page(index, pageSize int) ([]po.Transaction, e
     return resp, error
 }
 
-func (x *XormTransactionRepoImpl) Query(trxHash string) (po.Transaction, error) {
-    trx := po.Transaction{Hash: trxHash}
-    _, err := x.Engine.Get(trx)
-    return trx, err
+func (x *XormTransactionRepoImpl) Query(trxHash string) (*po.Transaction, error) {
+    trx := &po.Transaction{Hash: trxHash}
+    exists, err := x.Engine.Get(trx)
+    if exists {
+        return trx,err
+    } else {
+        return nil,err
+    }
 }
 
-func (x *XormTransactionRepoImpl) save(trxs []po.Transaction) error {
+func (x *XormTransactionRepoImpl) Save(trxs []po.Transaction) error {
     if len(trxs) > 0 {
         _, error := x.Engine.Insert(trxs)
         return error
