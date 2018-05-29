@@ -18,5 +18,7 @@ type BlockRepo interface {
     /**
      *  按照高度查询
      */
-    Query(height int) (po.Block,error)
+    Query(height int) (*po.Block,error)
+
+    Save(blocks []po.Block)error
 }
