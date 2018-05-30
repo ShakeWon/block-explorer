@@ -24,6 +24,7 @@ func main() {
         MessageContextKeys: []string{"logger_message"},
         MessageHeaderKeys:  []string{"User-Agent"},
     })
+
     app.Use(customLogger)
     app.Logger().SetLevel("debug")
 
