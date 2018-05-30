@@ -3,14 +3,12 @@ package xormimpl
 import (
     "github.com/go-xorm/xorm"
     "github.com/shakewon/block-explorer/model/po"
+    "github.com/shakewon/block-explorer/repository"
 )
 
 type XormTransactionRepoImpl struct {
     *xorm.Engine
-<<<<<<< HEAD
     repository.TransactionsRepo
-=======
->>>>>>> c6fb292d2362ce2a42572dccaa159c1dd6fd551f
 }
 
 func (x *XormTransactionRepoImpl) Count() (int64, error) {
