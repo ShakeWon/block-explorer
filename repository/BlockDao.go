@@ -21,4 +21,9 @@ type BlockRepo interface {
     Query(height int) (*po.Block,error)
 
     Save(blocks []po.Block)error
+<<<<<<< HEAD
+=======
+
+    Height() (int64,error)
+>>>>>>> c6fb292d2362ce2a42572dccaa159c1dd6fd551f
 }
