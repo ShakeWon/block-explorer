@@ -24,6 +24,4 @@ func (s *SearchController) GetSearch() {
         s.Ctx.JSON(response.BaseResponse{Success: false, Error: errors.New("keywords can not be null")})
         return
     }
-
-
 }
