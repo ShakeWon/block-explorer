@@ -7,8 +7,8 @@ type Transaction struct {
     Hash       string `xormimpl:"unique"`
     Payload    string
     PayloadHex string
-    FromAddr   string
-    ToAddr     string
+    FromAddr   string `xormimpl:"index"`
+    ToAddr     string `xormimpl:"index"`
     Receipt    string
     Amount     string
     Nonce      string
