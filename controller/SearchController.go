@@ -20,26 +20,27 @@ type SearchController struct {
 }
 
 func (s *SearchController) GetSearch() {
+
     keywords := s.Ctx.URLParam("keywords")
     if len(keywords) == 0 {
         s.Ctx.JSON(response.BaseResponse{Success: false, Error: errors.New("keywords can not be null")})
         return
     }
 
-    if h, error := strconv.Atoi(keywords); error != nil {
+    if _, error := strconv.Atoi(keywords); error == nil {
         //hash search
-        if data, error := s.BlockSerivce.Page(1, 1, string(h), ""); error != nil {
+        if data, error := s.BlockSerivce.Page(1, 1, keywords, ""); error != nil {
             s.Ctx.JSON(response.BaseResponse{Success: false, Error: error})
             return
         } else {
-            s.Ctx.JSON(response.BaseResponse{Success: false, Data: response.SearchResponse{Type: BLOCK, Data: data}})
+            s.Ctx.JSON(response.BaseResponse{Success: true, Data: response.SearchResponse{Type: BLOCK, Data: data}})
         }
     } else {
         if data, error := s.TransactionService.Search(keywords);error!=nil{
             s.Ctx.JSON(response.BaseResponse{Success: false, Error: error})
             return
         }else {
-            s.Ctx.JSON(response.BaseResponse{Success: false, Data: response.SearchResponse{Type: TRANSACTION, Data: data}})
+            s.Ctx.JSON(response.BaseResponse{Success: true, Data: response.SearchResponse{Type: TRANSACTION, Data: data}})
         }
 
     }

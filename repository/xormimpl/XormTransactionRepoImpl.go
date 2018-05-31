@@ -64,6 +64,6 @@ func (x *XormTransactionRepoImpl) Save(trxs []po.Transaction) error {
 
 func (x *XormTransactionRepoImpl) Search(hash string) ([]po.Transaction, error) {
     var resp = make([]po.Transaction, 0)
-    error := x.Engine.Where("Hash=?", hash).Or("FromAddr=?", hash).Or("ToAddr=?", hash).Desc("Height").Limit(25,0).Find(resp)
+    error := x.Engine.Where("Hash=?", hash).Or("From_addr=?", hash).Or("To_Addr=?", hash).Desc("Height").Limit(25,0).Find(resp)
     return resp, error
 }
