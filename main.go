@@ -8,10 +8,9 @@ import (
     "github.com/shakewon/block-explorer/service"
     "github.com/shakewon/block-explorer/repository/xormimpl"
     "github.com/shakewon/block-explorer/repository"
-    "github.com/shakewon/block-explorer/third/bubuji"
     "github.com/shakewon/block-explorer/sys"
+    "github.com/shakewon/block-explorer/third/bubuji"
 )
-
 
 func main() {
     app := iris.New()
@@ -50,7 +49,7 @@ func basicMVC(app *mvc.Application) {
     blockService := service.BlockService{Bs: &xormimpl.XormBlockRepoImpl{Engine: engine}}
     blockController.BlockService = blockService
     app.Party("/block").Handle(blockController)
-    convert:= &bubuji.BubujiChainConvert{
+    convert := &bubuji.BubujiChainConvert{
        URL:     "http://rpc-bbjchain.zhonganinfo.com",
        ChainId: "prover",
     }
