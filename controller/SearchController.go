@@ -28,7 +28,7 @@ func (s *SearchController) GetSearch() {
     }
 
     if _, error := strconv.Atoi(keywords); error == nil {
-        //hash search
+        //block search
         if data, error := s.BlockSerivce.Page(1, 1, keywords, ""); error != nil {
             s.Ctx.JSON(response.BaseResponse{Success: false, Error: error})
             return
@@ -36,6 +36,9 @@ func (s *SearchController) GetSearch() {
             s.Ctx.JSON(response.BaseResponse{Success: true, Data: response.SearchResponse{Type: BLOCK, Data: data}})
         }
     } else {
+
+        // trx search
+
         if data, error := s.TransactionService.Search(keywords);error!=nil{
             s.Ctx.JSON(response.BaseResponse{Success: false, Error: error})
             return
