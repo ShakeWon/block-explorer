@@ -11,7 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
     "github.com/shakewon/block-explorer/third"
     "github.com/shakewon/block-explorer/model/po"
-    "github.com/Sirupsen/logrus"
+    "github.com/kataras/golog"
 )
 
 type ResultBlockchainInfo struct {
@@ -103,7 +103,7 @@ func (c *RevChainConvert) Height()  int{
 }
 
 func (c *RevChainConvert) Block(h int) *third.BlockRepo {
-    logrus.Info("current block height : ", h)
+    golog.Info("current block height : ", h)
 	url := fmt.Sprintf("%s/blockchain?minHeight=%d&maxHeight=%d&chainid=\"%s\"", c.URL, h+1, h+5, c.ChainId)
 
 	bytez, err := third.GetHTTPResp(url)
@@ -139,7 +139,7 @@ func (c *RevChainConvert) Block(h int) *third.BlockRepo {
 			//		blockHash := common.ToHex(o.Header.Hash())
 			resultBlock, err := GetBlock(int(o.Header.Height), c.URL, c.ChainId)
 			if err != nil {
-				logrus.Error("GetBlock(height:%d) Error :%v\n", o.Header.Height, err)
+				golog.Error("GetBlock(height:%d) Error :%v\n", o.Header.Height, err)
 				return &third.BlockRepo{}
 			} else {
 				for _, v := range resultBlock.Block.Data.Txs {

@@ -4,8 +4,8 @@ import (
     "github.com/shakewon/block-explorer/service"
     "github.com/shakewon/block-explorer/third"
     "sync"
-    "github.com/Sirupsen/logrus"
     "time"
+    "github.com/kataras/golog"
 )
 
 type SysJob struct {
@@ -46,11 +46,11 @@ func (job *SysJob) work(group *sync.WaitGroup, h int64) {
     defer group.Done()
     if data := (job.Convert).Block(int(h)); data != nil {
         if error := job.Bs.Save(data.Blocks); error != nil {
-            logrus.Error(error)
+            golog.Error(error)
         }
 
         if error := job.Ts.Save(data.Txs); error != nil {
-            logrus.Error(error)
+            golog.Error(error)
         }
     }
 

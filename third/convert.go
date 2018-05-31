@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"errors"
     "github.com/shakewon/block-explorer/model/po"
-    "github.com/Sirupsen/logrus"
+    "github.com/kataras/golog"
 )
 
 type HTTPResponse struct {
@@ -43,12 +43,12 @@ func GetStatus(httpAddr, chainID string) (status Status) {
 	url := fmt.Sprintf("%s/status?chainid=\"%s\"", httpAddr, chainID)
 	bytez, err := GetHTTPResp(url)
 	if err != nil {
-		logrus.Fatalf("GetHTTPResp failed: %s", err.Error())
+		golog.Fatalf("GetHTTPResp failed: %s", err.Error())
 	}
 
 	err = json.Unmarshal(bytez, &status)
 	if err != nil {
-        logrus.Fatalf("json.Unmarshal(Status) failed: %s", err.Error())
+        golog.Fatalf("json.Unmarshal(Status) failed: %s", err.Error())
 	}
 	return
 }

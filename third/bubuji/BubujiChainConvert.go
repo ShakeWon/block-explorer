@@ -9,12 +9,12 @@ import (
     "github.com/ethereum/go-ethereum/common"
     "github.com/shakewon/block-explorer/third"
     "github.com/shakewon/block-explorer/model/po"
-    "github.com/Sirupsen/logrus"
     "bytes"
     "encoding/gob"
     "encoding/hex"
     "gitlab.zhonganonline.com/ann/prover/src/chain/app"
     "github.com/annchain/angine/types"
+    "github.com/kataras/golog"
 )
 
 type BubujiChainConvert struct {
@@ -75,11 +75,11 @@ func (c *BubujiChainConvert) Height() int {
 }
 
 func (c *BubujiChainConvert) Block(h int) *third.BlockRepo {
-    fmt.Println("current block height : ", h)
+    golog.Info("current block height : ", h)
 
     block, errG := GetBlock(h, c.URL, c.ChainId)
     if errG != nil {
-        logrus.Error(errG)
+        golog.Error(errG)
         return nil
     }
     //save block
@@ -114,7 +114,7 @@ func (c *BubujiChainConvert) Block(h int) *third.BlockRepo {
 
             rtx, errP := parseTransaction(&rb, k)
             if errP != nil {
-                logrus.Error(errP)
+                golog.Error(errP)
                 return nil
             }
             br.Txs = append(br.Txs, rtx)
@@ -134,7 +134,7 @@ func parseTransaction(rb *po.Block, v string) (rtx po.Transaction, err error) {
 
     tag := string(common.FromHex(v)[:4])
     bytez := types.UnwrapTx(common.FromHex(v))
-    logrus.Info(tag)
+    golog.Info(tag)
     switch tag {
 
     case string(app.ProverConfirmTag):
@@ -164,7 +164,7 @@ func parseTransaction(rb *po.Block, v string) (rtx po.Transaction, err error) {
         }
 
     default:
-        logrus.Warnf("unknown tag: %s\n", tag)
+        golog.Warnf("unknown tag: %s\n", tag)
         return
     }
 

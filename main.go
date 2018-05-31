@@ -13,6 +13,9 @@ import (
     "github.com/shakewon/block-explorer/model"
     "io/ioutil"
     "gopkg.in/yaml.v2"
+    "github.com/kataras/golog"
+    "runtime"
+    "fmt"
 )
 
 func main() {
@@ -28,7 +31,23 @@ func main() {
     })
 
     app.Use(customLogger)
+
+    app.Logger().Handle(func(l *golog.Log) bool {
+        prefix := golog.GetTextForLevel(l.Level, true)
+        pc, fn, line, _ := runtime.Caller(7)
+        message := fmt.Sprintf("%s line %d (%s) (%s) %s: %s",
+            prefix, line, runtime.FuncForPC(pc).Name(), fn, l.FormatTime(), l.Message)
+
+        if l.NewLine {
+            message += "\n"
+        }
+
+        fmt.Print(message)
+        return true
+    })
+
     app.Logger().SetLevel("debug")
+
 
     mvc.Configure(app.Party("/api"), basicMVC)
 
