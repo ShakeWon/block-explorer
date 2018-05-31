@@ -21,7 +21,7 @@ func (x *XormTransactionRepoImpl) Page(index, pageSize int) ([]po.Transaction, e
     if index >= 1 {
         start = (index - 1) * pageSize
     }
-    var resp  = make([]po.Transaction,0)
+    var resp = make([]po.Transaction, 0)
     error := x.Engine.Desc("Height").Limit(pageSize, start).Find(&resp)
     return resp, error
 }
@@ -30,9 +30,9 @@ func (x *XormTransactionRepoImpl) Query(trxHash string) (*po.Transaction, error)
     trx := &po.Transaction{Hash: trxHash}
     exists, err := x.Engine.Get(trx)
     if exists {
-        return trx,err
+        return trx, err
     } else {
-        return nil,err
+        return nil, err
     }
 }
 
@@ -43,4 +43,10 @@ func (x *XormTransactionRepoImpl) Save(trxs []po.Transaction) error {
     } else {
         return nil
     }
+}
+
+func (x *XormTransactionRepoImpl) Search(hash string) ([]po.Transaction, error) {
+    var resp = make([]po.Transaction, 0)
+    error := x.Engine.Where("Hash=?", hash).Or("FromAddr=?", hash).Or("ToAddr=?", hash).Find(resp)
+    return resp, error
 }

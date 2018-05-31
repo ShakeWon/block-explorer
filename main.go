@@ -53,6 +53,12 @@ func basicMVC(app *mvc.Application) {
     blockService := service.BlockService{Bs: &xormimpl.XormBlockRepoImpl{Engine: engine}}
     blockController.BlockService = blockService
     app.Party("/block").Handle(blockController)
+
+    searchController := new(controller.SearchController)
+    searchController.BlockSerivce = blockService
+    searchController.TransactionService = transactionService
+    app.Party("/search").Handle(searchController)
+
     convert := &bubuji.BubujiChainConvert{
         URL:     config.Sys.Url,
         ChainId: config.Sys.ChainId,

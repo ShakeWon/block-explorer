@@ -21,7 +21,7 @@ func (x *XormBlockRepoImpl) Page(index, pageSize int) ([]po.Block, error) {
     if index >= 1 {
         start = (index - 1) * pageSize
     }
-    resp:= make([]po.Block,0)
+    resp := make([]po.Block, 0)
     error := x.Engine.Desc("Height").Limit(pageSize, start).Find(&resp)
     return resp, error
 }
@@ -46,12 +46,22 @@ func (x *XormBlockRepoImpl) Save(blocks []po.Block) error {
     }
 }
 
-func (x *XormBlockRepoImpl) Height() (int64,error) {
-    var resp = make([]po.Block,0)
+func (x *XormBlockRepoImpl) Height() (int64, error) {
+    var resp = make([]po.Block, 0)
     if error := x.Engine.Desc("Height").Limit(1, 0).Find(&resp); error == nil && len(resp) > 0 {
         return resp[0].Height, error
     } else {
         return int64(0), error
+    }
+
+}
+
+func (x *XormBlockRepoImpl) Search(hash string) (*po.Block, error) {
+    var resp = make([]po.Block, 0)
+    if error := x.Engine.Where("Hash=?", hash).Find(&resp); error == nil && len(resp) > 0 {
+        return &resp[0], error
+    } else {
+        return nil, error
     }
 
 }

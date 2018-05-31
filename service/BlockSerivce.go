@@ -64,3 +64,23 @@ func (bs *BlockService) Query(height int) (*response.Block, error) {
 func (bs *BlockService) Save(blocks []po.Block) error {
     return bs.Bs.Save(blocks)
 }
+
+func (bs *BlockService) Search(hash string) (*response.Block, error) {
+    if p, error := bs.Bs.Search(hash); error == nil && p!=nil {
+        return &response.Block{
+            Height:         p.Height,
+            Hash:           p.Hash,
+            ChainId:        p.ChainId,
+            Time:           p.Time,
+            NumTxs:         p.NumTxs,
+            LastCommitHash: p.LastCommitHash,
+            DataHash:       p.DataHash,
+            ValidatorsHash: p.ValidatorsHash,
+            AppHash:        p.AppHash,
+            Reward:         p.Reward,
+            CoinBase:       p.CoinBase,
+        },error
+    } else {
+        return nil,error
+    }
+}

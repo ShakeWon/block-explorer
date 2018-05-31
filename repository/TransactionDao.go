@@ -7,4 +7,5 @@ type TransactionsRepo interface {
     Page(index, pageSize int) ([]po.Transaction, error)
     Query(trxHash string) (*po.Transaction, error)
     Save(trxs []po.Transaction) error
+    Search(hash string) ([]po.Transaction, error)
 }

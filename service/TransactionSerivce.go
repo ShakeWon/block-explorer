@@ -67,3 +67,31 @@ func (t *TransactionService) Query(trxHash string) (*response.Transaction, error
 func (t *TransactionService) Save(trxs []po.Transaction) error {
     return t.Ts.Save(trxs)
 }
+
+func (t *TransactionService) Search(hash string)([]response.Transaction, error){
+    data, error := t.Ts.Search(hash)
+    var resp []response.Transaction
+    if len(data) > 0 {
+        for _, e := range data {
+            resp = append(resp, response.Transaction{
+                Hash:       e.Hash,
+                Payload:    e.Payload,
+                PayloadHex: e.PayloadHex,
+                FromAddr:   e.FromAddr,
+                ToAddr:     e.ToAddr,
+                Receipt:    e.Receipt,
+                Amount:     e.Amount,
+                Nonce:      e.Nonce,
+                Gas:        e.Gas,
+                Size:       e.Size,
+                Block:      e.Block,
+                Contract:   e.Block,
+                Time:       e.Time,
+                Height:     e.Height,
+                TxType:     e.TxType,
+                Fee:        e.Fee,
+            })
+        }
+    }
+    return resp, error
+}
