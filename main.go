@@ -10,6 +10,9 @@ import (
     "github.com/shakewon/block-explorer/repository"
     "github.com/shakewon/block-explorer/sys"
     "github.com/shakewon/block-explorer/third/bubuji"
+    "github.com/shakewon/block-explorer/model"
+    "io/ioutil"
+    "gopkg.in/yaml.v2"
 )
 
 func main() {
@@ -33,7 +36,8 @@ func main() {
 }
 
 func basicMVC(app *mvc.Application) {
-    engine, error := repository.InitDataSouce()
+    config := ReadAppConfigFile("./configs/app.yml")
+    engine, error := repository.InitDataSouce(config)
     if error != nil {
         panic(error)
     }
@@ -50,14 +54,26 @@ func basicMVC(app *mvc.Application) {
     blockController.BlockService = blockService
     app.Party("/block").Handle(blockController)
     convert := &bubuji.BubujiChainConvert{
-       URL:     "http://rpc-bbjchain.zhonganinfo.com",
-       ChainId: "prover",
+        URL:     config.Sys.Url,
+        ChainId: config.Sys.ChainId,
     }
     convert.Init()
     job := sys.SysJob{
-       BlockService:       blockService,
-       TransactionService: transactionService,
-       Convert:            convert,
+        BlockService:       blockService,
+        TransactionService: transactionService,
+        Convert:            convert,
     }
     go job.Start()
+}
+
+func ReadAppConfigFile(path string) model.AppConfig {
+    data, err := ioutil.ReadFile(path)
+    if err != nil {
+        panic(err)
+    }
+    var config model.AppConfig
+    if error := yaml.Unmarshal(data, &config); error != nil {
+        panic(error)
+    }
+    return config
 }

@@ -1,0 +1,9 @@
+store:
+    drivername: sqlite
+    url:
+    pass:
+
+sys:
+  url: http://rpc-bbjchain.zhonganinfo.com
+  chainId: prover
+
