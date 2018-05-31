@@ -23,6 +23,7 @@ func (b *BlockController) GetPage() {
     }
 
     pageSize, error := b.Ctx.URLParamInt("pageSize")
+
     if error != nil {
         b.Ctx.Application().Logger().Error(error)
         b.Ctx.JSON(response.BaseResponse{Success: false, Error: error,},
@@ -30,7 +31,11 @@ func (b *BlockController) GetPage() {
         return
     }
 
-    count, error := b.Count()
+    height := b.Ctx.URLParam("height")
+    hash := b.Ctx.URLParam("hash")
+
+    count, error := b.Count(height, hash)
+
     if error != nil {
         b.Ctx.Application().Logger().Error(error)
         b.Ctx.JSON(response.BaseResponse{Success: false, Error: error,},
@@ -40,7 +45,7 @@ func (b *BlockController) GetPage() {
 
     var data []response.Block
     if count > 0 {
-        data, error = b.BlockService.Page(pageIndex, pageSize)
+        data, error = b.BlockService.Page(pageIndex, pageSize,height,hash)
         if error != nil {
             b.Ctx.Application().Logger().Error(error)
             b.Ctx.JSON(response.BaseResponse{Success: false, Error: error,},
@@ -60,28 +65,4 @@ func (b *BlockController) GetPage() {
         },
     )
 
-}
-
-func (b *BlockController) GetQuery() {
-    height, error := b.Ctx.URLParamInt("height")
-    if error != nil {
-        b.Ctx.Application().Logger().Error(error)
-        b.Ctx.JSON(response.BaseResponse{Success: false, Error: error,},
-        )
-        return
-    }
-
-    data, error := b.BlockService.Query(height)
-    if error != nil {
-        b.Ctx.Application().Logger().Error(error)
-        b.Ctx.JSON(response.BaseResponse{Success: false, Error: error,},
-        )
-        return
-    }
-    b.Ctx.JSON(
-        response.BaseResponse{
-            Success: true, Error: error,
-            Data:    data,
-        },
-    )
 }

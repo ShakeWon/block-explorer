@@ -4,6 +4,7 @@ import (
     "github.com/go-xorm/xorm"
     "github.com/shakewon/block-explorer/model/po"
     "github.com/shakewon/block-explorer/repository"
+    "strconv"
 )
 
 type XormTransactionRepoImpl struct {
@@ -11,29 +12,45 @@ type XormTransactionRepoImpl struct {
     repository.TransactionsRepo
 }
 
-func (x *XormTransactionRepoImpl) Count() (int64, error) {
-    total, err := x.Engine.Count(&po.Transaction{})
+func (x *XormTransactionRepoImpl) Count(height, hash string) (int64, error) {
+    transaction := &po.Transaction{}
+
+    if len(height) > 0 {
+        if h, err := strconv.Atoi(height); err != nil {
+            return 0, err
+        } else {
+            transaction.Height = int64(h)
+        }
+    }
+    if len(hash) > 0 {
+        transaction.Hash = hash
+    }
+    total, err := x.Engine.Count(transaction)
     return total, err
 }
 
-func (x *XormTransactionRepoImpl) Page(index, pageSize int) ([]po.Transaction, error) {
+func (x *XormTransactionRepoImpl) Page(index, pageSize int,height, hash string) ([]po.Transaction, error) {
     start := 0
     if index >= 1 {
         start = (index - 1) * pageSize
     }
-    var resp = make([]po.Transaction, 0)
-    error := x.Engine.Desc("Height").Limit(pageSize, start).Find(&resp)
-    return resp, error
-}
 
-func (x *XormTransactionRepoImpl) Query(trxHash string) (*po.Transaction, error) {
-    trx := &po.Transaction{Hash: trxHash}
-    exists, err := x.Engine.Get(trx)
-    if exists {
-        return trx, err
-    } else {
-        return nil, err
+    transaction := &po.Transaction{}
+
+    if len(height) > 0 {
+        if h, err := strconv.Atoi(height); err != nil {
+            return nil, err
+        } else {
+            transaction.Height = int64(h)
+        }
     }
+    if len(hash) > 0 {
+        transaction.Hash = hash
+    }
+
+    var resp = make([]po.Transaction, 0)
+    error := x.Engine.Desc("Height").Limit(pageSize, start).Find(&resp,transaction)
+    return resp, error
 }
 
 func (x *XormTransactionRepoImpl) Save(trxs []po.Transaction) error {

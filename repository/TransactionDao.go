@@ -3,9 +3,8 @@ package repository
 import "github.com/shakewon/block-explorer/model/po"
 
 type TransactionsRepo interface {
-    Count() (int64, error)
-    Page(index, pageSize int) ([]po.Transaction, error)
-    Query(trxHash string) (*po.Transaction, error)
+    Count(height,hash string) (int64, error)
+    Page(index, pageSize int,height,hash string) ([]po.Transaction, error)
     Save(trxs []po.Transaction) error
     Search(hash string) ([]po.Transaction, error)
 }

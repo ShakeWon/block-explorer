@@ -31,7 +31,11 @@ func (t *TrxController) GetPage() {
         return
     }
 
-    count, error := t.Count()
+    height:=t.Ctx.URLParam("height")
+
+    hash:= t.Ctx.URLParam("hash")
+
+    count, error := t.Count(height,hash)
     if error != nil {
         t.Ctx.Application().Logger().Error(error)
         t.Ctx.JSON(response.BaseResponse{Success: false, Error: error,},
@@ -41,7 +45,7 @@ func (t *TrxController) GetPage() {
 
     var data []response.Transaction
     if count > 0 {
-        data, error = t.TransactionService.Page(pageIndex, pageSize)
+        data, error = t.TransactionService.Page(pageIndex, pageSize,height,hash)
         if error != nil {
             t.Ctx.Application().Logger().Error(error)
             t.Ctx.JSON(response.BaseResponse{Success: false, Error: error,},
@@ -63,21 +67,5 @@ func (t *TrxController) GetPage() {
 
 }
 
-func (t *TrxController) GetQuery() {
-    hash := t.Ctx.URLParam("hash")
 
-    data, error := t.TransactionService.Query(hash)
-    if error != nil {
-        t.Ctx.Application().Logger().Error(error)
-        t.Ctx.JSON(response.BaseResponse{Success: false, Error: error,},
-        )
-        return
-    }
-    t.Ctx.JSON(
-        response.BaseResponse{
-            Success: true, Error: error,
-            Data:    data,
-        },
-    )
-}
 

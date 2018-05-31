@@ -4,6 +4,7 @@ import (
     "github.com/go-xorm/xorm"
     "github.com/shakewon/block-explorer/model/po"
     "github.com/shakewon/block-explorer/repository"
+    "strconv"
 )
 
 type XormBlockRepoImpl struct {
@@ -11,30 +12,43 @@ type XormBlockRepoImpl struct {
     repository.BlockRepo
 }
 
-func (x *XormBlockRepoImpl) Count() (int64, error) {
-    count, error := x.Engine.Count(po.Block{})
+func (x *XormBlockRepoImpl) Count(height, hash string) (int64, error) {
+    block := po.Block{}
+    if len(height) > 0 {
+        if h, err := strconv.Atoi(height); err != nil {
+            return 0, err
+        } else {
+            block.Height = int64(h)
+        }
+    }
+    if len(hash) > 0 {
+        block.Hash = hash
+    }
+    count, error := x.Engine.Count(block)
     return count, error
 }
 
-func (x *XormBlockRepoImpl) Page(index, pageSize int) ([]po.Block, error) {
+func (x *XormBlockRepoImpl) Page(index, pageSize int, height, hash string) ([]po.Block, error) {
     start := 0
     if index >= 1 {
         start = (index - 1) * pageSize
     }
     resp := make([]po.Block, 0)
-    error := x.Engine.Desc("Height").Limit(pageSize, start).Find(&resp)
-    return resp, error
-}
 
-func (x *XormBlockRepoImpl) Query(height int) (*po.Block, error) {
-    block := &po.Block{Height: int64(height)}
-    exist, error := x.Engine.Get(block)
-    if exist {
-        return block, error
-    } else {
-        return nil, error
+    block := po.Block{}
+    if len(height) > 0 {
+        if h, err := strconv.Atoi(height); err != nil {
+            return nil, err
+        } else {
+            block.Height = int64(h)
+        }
+    }
+    if len(hash) > 0 {
+        block.Hash = hash
     }
 
+    error := x.Engine.Desc("Height").Limit(pageSize, start).Find(&resp,block)
+    return resp, error
 }
 
 func (x *XormBlockRepoImpl) Save(blocks []po.Block) error {
@@ -46,22 +60,5 @@ func (x *XormBlockRepoImpl) Save(blocks []po.Block) error {
     }
 }
 
-func (x *XormBlockRepoImpl) Height() (int64, error) {
-    var resp = make([]po.Block, 0)
-    if error := x.Engine.Desc("Height").Limit(1, 0).Find(&resp); error == nil && len(resp) > 0 {
-        return resp[0].Height, error
-    } else {
-        return int64(0), error
-    }
 
-}
 
-func (x *XormBlockRepoImpl) Search(hash string) (*po.Block, error) {
-    var resp = make([]po.Block, 0)
-    if error := x.Engine.Where("Hash=?", hash).Find(&resp); error == nil && len(resp) > 0 {
-        return &resp[0], error
-    } else {
-        return nil, error
-    }
-
-}

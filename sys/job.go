@@ -21,9 +21,13 @@ var (
 func (job *SysJob) Start() {
 
     for range time.NewTicker(1 * time.Second).C {
-        heightInDB, error := job.Bs.Height()
+        blocks, error := job.Bs.Page(1,1,"","")
         if error != nil {
             panic(error)
+        }
+        var heightInDB int64 = 0
+        if len(blocks)>0 {
+            heightInDB = blocks[0].Height
         }
         heightOfNode := int64((job.Convert).Height())
 
