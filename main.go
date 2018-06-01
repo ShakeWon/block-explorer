@@ -32,6 +32,11 @@ func main() {
 
     app.Use(customLogger)
 
+    app.UseGlobal(func(ctx iris.Context){
+        ctx.Header("Access-Control-Allow-Origin", "*")
+        ctx.Next()
+    })
+
     app.Logger().Handle(func(l *golog.Log) bool {
         prefix := golog.GetTextForLevel(l.Level, true)
         pc, fn, line, _ := runtime.Caller(6)
