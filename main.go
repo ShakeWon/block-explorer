@@ -34,6 +34,12 @@ func main() {
         fmt.Print(message)
         return true
     })
+    app.StaticWeb("css","./static/css")
+    app.StaticWeb("js","./static/js")
+    app.StaticWeb("img","./static/img")
+    app.StaticWeb("vendor","./static/vendor")
+    app.StaticWeb("/","./view")
+
 
     app.Logger().SetLevel("debug")
 
@@ -67,14 +73,14 @@ func basicMVC(app *mvc.Application) {
     app.Party("/search").Handle(searchController)
 
     convert := &bubuji.BubujiChainConvert{
-       URL:     config.Sys.Url,
-       ChainId: config.Sys.ChainId,
+      URL:     config.Sys.Url,
+      ChainId: config.Sys.ChainId,
     }
     convert.Init()
     job := sys.SysJob{
-       BlockService:       blockService,
-       TransactionService: transactionService,
-       Convert:            convert,
+      BlockService:       blockService,
+      TransactionService: transactionService,
+      Convert:            convert,
     }
     go job.Start()
 }
