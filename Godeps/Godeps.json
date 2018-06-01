@@ -17,11 +17,6 @@
 			"Rev": "8828253bfc54f2f91aaef5f32b44a244b0a98e4f"
 		},
 		{
-			"ImportPath": "github.com/Sirupsen/logrus",
-			"Comment": "v1.0.5-26-gea8897e",
-			"Rev": "ea8897e79973357ba785ac2533559a6297e83c44"
-		},
-		{
 			"ImportPath": "github.com/annchain/angine/types",
 			"Rev": "9cc0cf603ef3b6ba87253e2bd92b4c3203d38f54"
 		},
@@ -281,6 +276,11 @@
 		{
 			"ImportPath": "github.com/iris-contrib/formBinder",
 			"Rev": "ad9fb86c356f971f30319c40ddbdcf72129a2791"
+		},
+		{
+			"ImportPath": "github.com/iris-contrib/middleware/cors",
+			"Comment": "v10-17-gd96d7ec",
+			"Rev": "d96d7ecf07bfb1a1305e65a412995f6973285828"
 		},
 		{
 			"ImportPath": "github.com/jmhodges/levigo",
@@ -860,10 +860,6 @@
 			"Rev": "2b6c08872f4b66da917bb4ce98df4f0307330f78"
 		},
 		{
-			"ImportPath": "golang.org/x/crypto/ssh/terminal",
-			"Rev": "2b6c08872f4b66da917bb4ce98df4f0307330f78"
-		},
-		{
 			"ImportPath": "golang.org/x/net/html",
 			"Rev": "1e491301e022f8f977054da4c2d852decd59571f"
 		},
@@ -873,10 +869,6 @@
 		},
 		{
 			"ImportPath": "golang.org/x/sys/unix",
-			"Rev": "79b0c6888797020a994db17c8510466c72fe75d9"
-		},
-		{
-			"ImportPath": "golang.org/x/sys/windows",
 			"Rev": "79b0c6888797020a994db17c8510466c72fe75d9"
 		},
 		{

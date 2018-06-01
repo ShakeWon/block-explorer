@@ -2,40 +2,24 @@ package main
 
 import (
     "github.com/kataras/iris"
-    "github.com/kataras/iris/middleware/logger"
     "github.com/kataras/iris/mvc"
     "github.com/shakewon/block-explorer/controller"
     "github.com/shakewon/block-explorer/service"
     "github.com/shakewon/block-explorer/repository/xormimpl"
     "github.com/shakewon/block-explorer/repository"
-    "github.com/shakewon/block-explorer/sys"
-    "github.com/shakewon/block-explorer/third/bubuji"
     "github.com/shakewon/block-explorer/model"
     "io/ioutil"
     "gopkg.in/yaml.v2"
     "github.com/kataras/golog"
     "runtime"
     "fmt"
+    "github.com/iris-contrib/middleware/cors"
+    "github.com/shakewon/block-explorer/third/bubuji"
+    "github.com/shakewon/block-explorer/sys"
 )
 
 func main() {
     app := iris.New()
-
-    customLogger := logger.New(logger.Config{
-        Status:             true,
-        IP:                 true,
-        Method:             true,
-        Path:               true,
-        MessageContextKeys: []string{"logger_message"},
-        MessageHeaderKeys:  []string{"User-Agent"},
-    })
-
-    app.Use(customLogger)
-
-    app.UseGlobal(func(ctx iris.Context){
-        ctx.Header("Access-Control-Allow-Origin", "*")
-        ctx.Next()
-    })
 
     app.Logger().Handle(func(l *golog.Log) bool {
         prefix := golog.GetTextForLevel(l.Level, true)
@@ -53,8 +37,7 @@ func main() {
 
     app.Logger().SetLevel("debug")
 
-
-    mvc.Configure(app.Party("/api"), basicMVC)
+    mvc.Configure(app.Party("/api",cors.AllowAll()).AllowMethods(iris.MethodOptions), basicMVC)
 
     app.Run(iris.Addr(":8080"), iris.WithConfiguration(iris.YAML("./configs/iris.yml")))
 }
@@ -84,14 +67,14 @@ func basicMVC(app *mvc.Application) {
     app.Party("/search").Handle(searchController)
 
     convert := &bubuji.BubujiChainConvert{
-        URL:     config.Sys.Url,
-        ChainId: config.Sys.ChainId,
+       URL:     config.Sys.Url,
+       ChainId: config.Sys.ChainId,
     }
     convert.Init()
     job := sys.SysJob{
-        BlockService:       blockService,
-        TransactionService: transactionService,
-        Convert:            convert,
+       BlockService:       blockService,
+       TransactionService: transactionService,
+       Convert:            convert,
     }
     go job.Start()
 }
