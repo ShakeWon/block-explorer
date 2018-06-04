@@ -23,6 +23,11 @@ header.masthead {
   padding-bottom: 8rem;
 }
 
+.table{
+  table-layout: fixed;
+  word-wrap: break-word;
+}
+
 header.ts {
   position: relative;
   background-color: #343a40;
